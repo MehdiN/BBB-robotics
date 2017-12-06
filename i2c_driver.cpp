@@ -101,7 +101,7 @@ int bbb_i2c_set_device_address(uint8_t devAddr){
 }
 
 // close i2c bus
-int bbb_i2c_close(){
+int bbb_i2c_close(void){
 
 	if(_bus!=1 && _bus!=2){
 		std:cout << "BUS SELECTED IS NOT VALID"<< std::endl;
@@ -115,7 +115,7 @@ int bbb_i2c_close(){
 
 
 // 	claim a i2c bus
-int bbb_i2c_claim_bus(){
+int bbb_i2c_claim_bus(void){
 	if(_bus!=1 && _bus!=2){
 		std:cout << "BUS SELECTED IS NOT VALID"<< std::endl;
 		return -1;
@@ -127,7 +127,7 @@ int bbb_i2c_claim_bus(){
 
 
 // release i2c bus 
-int bbb_i2c_release_bus(){
+int bbb_i2c_release_bus(void){
 	if(_bus!=1 && _bus!=2){
 		std:cout << "BUS SELECTED IS NOT VALID"<< std::endl;
 		return -1;
@@ -138,7 +138,7 @@ int bbb_i2c_release_bus(){
 
 
 //get i2c bus state
-int bbb_i2c_get_in_use_state(){
+int bbb_i2c_get_in_use_state(void){
 	if(_bus!=1 && _bus!=2){
 		std::cout << "BUS SELECTED IS NOT VALID" << std::endl;
 		return -1;
