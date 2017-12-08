@@ -1,7 +1,15 @@
+#include <iostream>
+#include <string>
+
 /* DRIVER FOR MPU-9250 */
 
-// MPU 9250 REGISTERIES
+/*****************************************
+******************************************
+		 MPU 9250 REGISTERIES
+******************************************
+******************************************/
 
+#define MPU9250_ADDRESS		0x68
 
 // GYROSCOPE AND ACCELEROMETER REGISTER MAP 
 
@@ -14,6 +22,8 @@
 #define SELF_TEST_X_ACCEL 	0x0D
 #define SELF_TEST_Y_ACCEL 	0x0E
 #define SELF_TEST_Z_ACCEL 	0x0F
+
+// GYRO OFFSET
 
 #define XG_OFFSET_H			0x13		
 #define XG_OFFSET_L			0x14
@@ -109,7 +119,7 @@
 #define SIGNAL_PATH_RESET  	0x68
 #define MOT_DETECT_CTRL  	0x69
 #define USER_CTRL        	0x6A 
-#define PWR_MGMT_1       	0x6B
+#define PWR_MGMT_1       	0x6B // return 0x01
 #define PWR_MGMT_2       	0x6C
 #define DMP_BANK         	0x6D  
 #define DMP_RW_PNT       	0x6E  
@@ -120,7 +130,7 @@
 #define FIFO_COUNTL      	0x73
 #define FIFO_R_W         	0x74
 
-#define WHO_AM_I_MPU9250 	0x75
+#define WHO_AM_I_MPU9250 	0x75 // return 0x71
 
 #define XA_OFFSET_H      	0x77
 #define XA_OFFSET_L      	0x78
@@ -129,3 +139,50 @@
 #define ZA_OFFSET_H      	0x7D
 #define ZA_OFFSET_L 	 	0x7E
 
+// REGITER MAP FOR MAGNETOMETER
+
+#define WHO_AM_I_AK8963		0x00
+#define INFO_AK8963			0x01
+
+#define MAG_ST1 			0x02 // data ready status
+
+#define MAG_XOUT_H 			0x03
+#define MAG_XOUT_L 			0x04
+#define MAG_YOUT_H 			0x05
+#define MAG_YOUT_L 			0x06
+#define MAG_ZOUT_H 			0x07
+#define MAG_ZOUT_L 			0x08
+	
+#define MAG_ST2   	    	0x09  
+#define MAG_CNTL  	    	0x0A // main mode control register
+#define MAG_ASTC  	    	0x0C // Self test control
+#define MAG_I2CDIS	    	0x0F // I2C disable
+#define MAG_ASAX  	    	0x10 // x-axis sensitivity adjustment value
+#define MAG_ASAY  	    	0x11 // y-axis sensitivity adjustment value
+#define MAG_ASAZ 			0x12 // z-axis sensitivity adjustment value
+
+
+/*********************************
+=============CONFIG===============
+*********************************/
+
+//--------GYRO-----------------
+
+#define GYRO_SCALE_250DPS 	0x00
+#define GYRO_SCALE_500DPS 	0x01 << 3
+#define GYRO_SCALE_1000DPS 	0x02 << 3
+#define GYRO_SCALE_2000DPS 	0x03 << 3
+
+//--------ACCEL-----------------
+
+#define ACCEL_SCALE_2G		0x00
+#define ACCEL_SCALE_4G		0x01 << 3
+#define ACCEL_SCALE_8G		0x02 << 3
+#define ACCEL_SCALE_16G		0x03 << 3
+
+//
+
+class IMU_MPU9250
+{
+
+}

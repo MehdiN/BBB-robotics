@@ -8,6 +8,7 @@
 
 #define I2C1_FILE "/dev/i2c-1"
 #define I2C2_FILE "/dev/i2c-2"
+
 #define MAX_LENGTH_I2C 128
 
 class BBB_I2C_Device

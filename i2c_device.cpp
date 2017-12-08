@@ -1,16 +1,7 @@
-#include "i2c_driver.h"
+#include "i2c_device.h"
 
 
-// typedef struct bbb_i2c_t {
-// 	/*data*/
-// 	uint8_t devAddr; // Device adress
-// 	int bus; // number of bus 0 1 2 (don't use O)
-// 	int file;
-// 	int inialized;
-// 	int in_use;
-// } bbb_i2c_t;
-
-// bbb_i2c_t i2c[3]; //
+/* BEAGLEBONE Blue I2C Device driver */
 
 // Contructor of I2C bus intance
 
@@ -25,9 +16,9 @@ _old_in_use(0)
 
 
 // i2c init
-int bbb_i2c_init(int bus,uint8_t devAddr){
+int BBB_I2C_Device::bbb_i2c_init(){
 
-	if(bus !=1 && bus !=2){
+	if(_bus !=1 && _bus !=2){
 		std:cout << "BUS SELECTED IS NOT VALID"<< std::endl;
 		return -1;
 	}
@@ -35,11 +26,9 @@ int bbb_i2c_init(int bus,uint8_t devAddr){
 	_in_use = 1;
 
 	_file = 0;
-	_devAddr  = devAddr;
-	_bus  = bus;
 	_inialized = 1;
 
-	switch(bus){
+	switch(-bus){
 		case 1:
 			_file = open(I2C1_FILE,O_RDWR);
 			break;
@@ -73,7 +62,7 @@ int bbb_i2c_init(int bus,uint8_t devAddr){
 
 
 //	i2c set address
-int bbb_i2c_set_device_address(uint8_t devAddr){
+int BBB_I2C_Device::bbb_i2c_set_device_address(uint8_t devAddr){
 
 	if(_bus !=1 && _bus !=2){
 		std:cout << "BUS SELECTED IS NOT VALID"<< std::endl;
@@ -101,7 +90,7 @@ int bbb_i2c_set_device_address(uint8_t devAddr){
 }
 
 // close i2c bus
-int bbb_i2c_close(void){
+int BBB_I2C_Device::bbb_i2c_close(void){
 
 	if(_bus!=1 && _bus!=2){
 		std:cout << "BUS SELECTED IS NOT VALID"<< std::endl;
@@ -115,30 +104,30 @@ int bbb_i2c_close(void){
 
 
 // 	claim a i2c bus
-int bbb_i2c_claim_bus(void){
+int BBB_I2C_Device::bbb_i2c_claim_bus(void){
 	if(_bus!=1 && _bus!=2){
 		std:cout << "BUS SELECTED IS NOT VALID"<< std::endl;
 		return -1;
 	}
-	i2c[bus].in_use=1;
+	_in_use=1;
 	return 0;
 }
 
 
 
 // release i2c bus 
-int bbb_i2c_release_bus(void){
+int BBB_I2C_Device::bbb_i2c_release_bus(void){
 	if(_bus!=1 && _bus!=2){
 		std:cout << "BUS SELECTED IS NOT VALID"<< std::endl;
 		return -1;
 	}
-	i2c[bus].in_use=0;
+	_n_use=0;
 	return 0;
 }
 
 
 //get i2c bus state
-int bbb_i2c_get_in_use_state(void){
+int BBB_I2C_Device::bbb_i2c_get_in_use_state(void){
 	if(_bus!=1 && _bus!=2){
 		std::cout << "BUS SELECTED IS NOT VALID" << std::endl;
 		return -1;
@@ -146,9 +135,9 @@ int bbb_i2c_get_in_use_state(void){
 	return _in_use;
 }
 
-// read bytes 
+// read 8 bit data of length
 
-int bbb_i2c_read_bytes(uint8_t regAddr,uint8_t length, uint8_t *data){
+int BBB_I2C_Device::bbb_i2c_read_bytes(uint8_t regAddr,uint8_t length, uint8_t *data){
 
 	int ret;
 	
@@ -179,11 +168,14 @@ int bbb_i2c_read_bytes(uint8_t regAddr,uint8_t length, uint8_t *data){
 	return ret;
 }
 
-int bbb_i2c_read_one_byte(uint8_t regAddr, uint8_t *data){
+
+// Read 8 bit data
+
+int BBB_I2C_Device::bbb_i2c_read_one_byte(uint8_t regAddr, uint8_t *data){
 	bbb_i2c_read_bytes(regAddr,1, data);
 }
 
-int bbb_i2c_read_words(uint8_t regAddr, uint8_t length,uint16_t *data) {
+int BBB_I2C_Device::bbb_i2c_read_words(uint8_t regAddr, uint8_t length,uint16_t *data) {
 	
 	int ret,i;
 	char buffer[MAX_I2C_LENGTH];
@@ -232,16 +224,16 @@ int bbb_i2c_read_words(uint8_t regAddr, uint8_t length,uint16_t *data) {
 }
 
 
-// Read unique word from I2C
+// Read 16 bits data
 
-int bbb_i2c_read_one_word(uint8_t regAddr, uint16_t *data) {
+int BBB_I2C_Device::bbb_i2c_read_one_word(uint8_t regAddr, uint16_t *data) {
 	return bbb_i2c_read_words(regAddr, 1, data);
 }
 
 
 // i2c read bit
 
-int bbb_i2c_read_bit( uint8_t regAddr, uint8_t bitNum,uint8_t *data) {
+int BBB_I2C_Device::bbb_i2c_read_bit( uint8_t regAddr, uint8_t bitNum,uint8_t *data) {
 	uint8_t b;
 	uint8_t count = rc_i2c_read_byte(regAddr, &b);
 	*data = b & (1 << bitNum);
@@ -250,7 +242,7 @@ int bbb_i2c_read_bit( uint8_t regAddr, uint8_t bitNum,uint8_t *data) {
 
 // I2C writes bytes
 
-int bbb_i2c_write_bytes(uint8_t regAddr, uint8_t length,uint8_t* data){
+int BBB_I2C_Device::bbb_i2c_write_bytes(uint8_t regAddr, uint8_t length,uint8_t* data){
 	
 	int i,ret;
 	uint8_t writeData[length+1]; 
@@ -294,13 +286,13 @@ int bbb_i2c_write_bytes(uint8_t regAddr, uint8_t length,uint8_t* data){
 
 // I2C Write unique byte
 
-int bbb_i2c_write_one_byte( uint8_t regAddr, uint8_t data) {
+int BBB_I2C_Device::bbb_i2c_write_one_byte( uint8_t regAddr, uint8_t data) {
 	return rc_i2c_write_bytes(regAddr, 1, &data);
 }
 
 // I2C write words
 
-int bbb_i2c_write_words(uint8_t regAddr, uint8_t length,uint16_t* data){
+int BBB_I2C_Device::bbb_i2c_write_words(uint8_t regAddr, uint8_t length,uint16_t* data){
 	
 	int i,ret;
 	uint8_t writeData[(length*2)+1];
@@ -342,11 +334,11 @@ int bbb_i2c_write_words(uint8_t regAddr, uint8_t length,uint16_t* data){
 
 // write one word
 
-int bbb_i2c_write_word(int bus, uint8_t regAddr, uint16_t data) {
+int BBB_I2C_Device::bbb_i2c_write_word(int bus, uint8_t regAddr, uint16_t data) {
 	return bbb_i2c_write_words(bus, regAddr, 1, &data);
 }
 
-int bbb_i2c_write_bit(uint8_t regAddr, uint8_t bitNum,uint8_t data){
+int BBB_I2C_Device::bbb_i2c_write_bit(uint8_t regAddr, uint8_t bitNum,uint8_t data){
 	uint8_t b;
 	// read back the current state of the register
 	bbb_i2c_read_byte(regAddr, &b);
@@ -358,7 +350,7 @@ int bbb_i2c_write_bit(uint8_t regAddr, uint8_t bitNum,uint8_t data){
 
 // send bytes
 
-int bbb_i2c_send_bytes(uint8_t length, uint8_t* data){
+int BBB_I2C_Device::bbb_i2c_send_bytes(uint8_t length, uint8_t* data){
 	int ret=0;
 	
 	if(_bus!=1 && _bus!=2){
@@ -399,6 +391,6 @@ int bbb_i2c_send_bytes(uint8_t length, uint8_t* data){
 
 // send one byte
 
-int bbb_i2c_send_byte(uint8_t data){
+int BBB_I2C_Device::bbb_i2c_send_byte(uint8_t data){
 	return bbb_i2c_send_bytes(1,&data);
 }
