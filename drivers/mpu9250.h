@@ -1,5 +1,7 @@
 #include <iostream>
 #include <string>
+#include <math.h>
+#include "../i2c_device.h"
 
 /* DRIVER FOR MPU-9250 */
 
@@ -10,6 +12,7 @@
 ******************************************/
 
 #define MPU9250_ADDRESS		0x68
+#define AK8963_ADDRESS		0x0C
 
 // GYROSCOPE AND ACCELEROMETER REGISTER MAP 
 
@@ -65,6 +68,7 @@
 #define INT_ENABLE			0x38
 #define	INT_STATUS			0x3A
 
+// ACCEL | GYRO | TEMP OUTPUTS
 
 #define ACCEL_XOUT_H 		0x3B
 #define ACCEL_XOUT_L 		0x3C 
@@ -82,6 +86,8 @@
 #define GYRO_YOUT_L			0x46
 #define GYRO_ZOUT_H			0x47
 #define GYRO_ZOUT_L			0x48
+
+// EXTERNAL SENSOR DATA
 
 #define EXT_SENS_DATA_00	0x49
 #define EXT_SENS_DATA_01	0x4A
@@ -110,6 +116,8 @@
 
 #define MOT_DETECT_STATUS	0x61
 
+// I2C Slave Register
+
 #define I2C_SLV0_DO      	0x63
 #define I2C_SLV1_DO      	0x64
 #define I2C_SLV2_DO      	0x65
@@ -118,14 +126,19 @@
 #define I2C_MST_DELAY_CTRL 	0x67
 #define SIGNAL_PATH_RESET  	0x68
 #define MOT_DETECT_CTRL  	0x69
+
+// 
+
 #define USER_CTRL        	0x6A 
 #define PWR_MGMT_1       	0x6B // return 0x01
 #define PWR_MGMT_2       	0x6C
+
 #define DMP_BANK         	0x6D  
 #define DMP_RW_PNT       	0x6E  
 #define DMP_REG          	0x6F 
 #define DMP_REG_1        	0x70
 #define DMP_REG_2        	0x71 
+
 #define FIFO_COUNTH      	0x72
 #define FIFO_COUNTL      	0x73
 #define FIFO_R_W         	0x74
@@ -165,24 +178,49 @@
 /*********************************
 =============CONFIG===============
 *********************************/
+// GYRO & TEMP DLPF
 
-//--------GYRO-----------------
+#define GYRO_DLPF_CFG_5		0X06
+#define GYRO_DLPF_CFG_10	0X05
+#define GYRO_DLPF_CFG_20 	0X04
+#define GYRO_DLPF_CFG_41	0X03
+#define GYRO_DLPF_CFG_92	0X02
+#define GYRO_DLPF_CFG_184	0X01
 
-#define GYRO_SCALE_250DPS 	0x00
-#define GYRO_SCALE_500DPS 	0x01 << 3
-#define GYRO_SCALE_1000DPS 	0x02 << 3
-#define GYRO_SCALE_2000DPS 	0x03 << 3
+//	GYRO FSR
 
-//--------ACCEL-----------------
+#define GYRO_FS_250DPS 		0x00
+#define GYRO_FS_500DPS 		0x01 << 3
+#define GYRO_FS_1000DPS 	0x02 << 3
+#define GYRO_FS_2000DPS 	0x03 << 3
 
-#define ACCEL_SCALE_2G		0x00
-#define ACCEL_SCALE_4G		0x01 << 3
-#define ACCEL_SCALE_8G		0x02 << 3
-#define ACCEL_SCALE_16G		0x03 << 3
+//	ACCEL FSR
 
-//
+#define ACCEL_FS_2G			0x00
+#define ACCEL_FS_4G			0x01 << 3
+#define ACCEL_FS_8G			0x02 << 3
+#define ACCEL_FS_16G		0x03 << 3
+ 
+// ACCEL DLPF Parameters
+
+#define ACCEL_DLPF_CFG_5	0X06
+#define ACCEL_DLPF_CFG_10	0X05
+#define ACCEL_DLPF_CFG_21 	0X04
+#define ACCEL_DLPF_CFG_44	0X03
+#define ACCEL_DLPF_CFG_99	0X02
+#define ACCEL_DLPF_CFG_218	0X01
+
+// I2C BYPASS CONFIG
+
+#define I2C_MST_EN		0x01 << 5
+#define I2C_MST_CLK		0x0D
+#define BYPASS_EN		0X01 << 1
 
 class IMU_MPU9250
 {
+public:
+
+private:
+	BBB_I2C_Device imu;
 
 }

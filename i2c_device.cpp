@@ -28,7 +28,7 @@ int BBB_I2C_Device::bbb_i2c_init(){
 	_file = 0;
 	_inialized = 1;
 
-	switch(-bus){
+	switch(_bus){
 		case 1:
 			_file = open(I2C1_FILE,O_RDWR);
 			break;
