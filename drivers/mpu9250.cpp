@@ -8,9 +8,11 @@
 #define RAD_TO_DEG	57.295779513f
 
 
-IMU_MPU9250::IMU_MPU9250(int bus,BBB_I2C_Device mpu9250){
-imu(mpu9250)
-magnetometer
+IMU_MPU9250::IMU_MPU9250(int bus,BBB_I2C_Device mpu9250,BBB_I2C_Device ak8963){
+
+imu(mpu9250),
+magnetometer(ak8963)
+
 }
 
 
@@ -135,6 +137,7 @@ void IMU_MPU9250::set_AccelDLPF(uint8_t freq){
 // void IMU_MPU9250::mpu_set_bypass(){}
 
 void IMU_MPU9250::initAK8963(){
+	
 	//Enable i2c bypass to allow access to magnetometer:
 	imu.bbb_i2c_write_one_byte(USER_CTRL,I2C_MST_EN);
 	imu.bbb_i2c_write_one_byte(I2C_MST_CTRL,I2C_MST_CLK);
