@@ -152,15 +152,23 @@ void IMU_MPU9250::initAK8963(){
 }
 
 
+void IMU_MPU9250::
 
-
-
-
-
-
-
-
-void IMU_MPU9250::configMag(){
+void IMU_MPU9250::writeAK89(uint8_t subAddress,uint8_t data){
+	bbb_i2c_write_one_byte(I2C_SLV0_ADDR,AK8963_ADDRESS);
+	bbb_i2c_write_one_byte(I2C_SLV0_REG,subAdress);
+	bbb_i2c_write_one_byte(I2C_SLV0_DO,data);
+	bbb_i2c_write_one_byte(I2C_SLV0_CTRL,0X01<<7);
+	bbb_i2c_write_one_byte(I2C_SLV4_CTRL,0x01);
 
 }
 
+void IMU_MPU9250_MPU::readAK89(uint8_t subAddress,uint8_t count, uint8_t *dest){
+	bbb_i2c_write_one_byte(I2C_SLV0_ADDR,AK8963_ADDRESS);
+	// set to read.
+	bbb_i2c_write_one_byte(I2C_SLV4_ADDR,0x01<<7);
+	// write to the subaddress of the AK8963
+	bbb_i2c_write_one_byte(I2C_SLV0_REG,subAddress);
+	// enable I2C
+
+}
