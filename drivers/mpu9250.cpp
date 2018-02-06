@@ -27,24 +27,34 @@ void IMU_MPU9250::initMPU9250(){
 	uint8_t ret;
 	
 	if(imu.bbb_i2c_read_one_byte(WHO_AM_I_MPU9250,&ret)<0){
+	
 		throw string( "INIT ERROR: UNABLE TO READ REGISTER %x",WHO_AM_I_MPU9250);
+	
 	}
+	
 	if(ret != 0x71){
 		throw string("THIS IS NOT THE MPU-9250");
 	}
 
 	// Power On the IMU and restore the defaults.
+	
 	imu.bbb_i2c_writeByte(PWR_MGMT_1,0x00);
+	
 	usleep(100);// Wait for all register to reset;
+	
 	imu.bbb_i2c_writeByte(PWR_MGMT_1,0x01); // auto select best available clocksource
+	
 	usleep(200);
 
 	
 	// set the dlpf_choice to 1
 	imu.bbb_i2c_writeByte(CONFIG,0x01)
+	
 	// set dlpf to true
 	setDLPF(true);
+	
 	// Configure Gyro and Thermp/
+	
 	configGyro();
 
 }
@@ -83,18 +93,31 @@ void IMU_MPU9250::setFsrGyro(uint8_t fsr){
 }
 
 void IMU_MPU9250::set_GyroDLPF(uint8_t freq){
+	
 	switch(freq){
+	
 		case GYRO_DLPF_CFG_5:
+	
 			imu.bbb_i2c_writeByte(GYRO_CONFIG,GYRO_DLPF_CFG_5);
+	
 		case GYRO_DLPF_CFG_10:
+	
 			imu.bbb_i2c_writeByte(GYRO_CONFIG,GYRO_DLPF_CFG_10);
+	
 		case GYRO_DLPF_CFG_20:
+	
 			imu.bbb_i2c_writeByte(GYRO_CONFIG,GYRO_DLPF_CFG_20);
+	
 		case GYRO_DLPF_CFG_41:
+	
 			imu.bbb_i2c_writeByte(GYRO_CONFIG,GYRO_DLPF_CFG_41);
+	
 		case GYRO_DLPF_CFG_92:
+	
 			imu.bbb_i2c_writeByte(GYRO_CONFIG,GYRO_DLPF_CFG_92);
+	
 		case GYRO_DLPF_CFG_184:
+	
 			imu.bbb_i2c_writeByte(GYRO_CONFIG,GYRO_DLPF_CFG_184);
 	}
 }
@@ -128,18 +151,31 @@ void IMU_MPU9250::setFsrAccel(uint8_t fsr){
 void IMU_MPU9250::set_AccelDLPF(uint8_t freq){
 	// Select the digital low pass filter band width
 	imu.bbb_i2c_write_byter(ACCEL_CONFIG2,(0x00<<3))
+	
 	switch(freq){
+		
 		case ACCEL_DLP_CFG_5:
+		
 			imu.bbb_i2c_writeByte(ACCEL_CONFIG2,ACCEL_DLPF_CFG_5);
+		
 		case ACCEL_DLP_CFG_10:
+		
 			imu.bbb_i2c_writeByte(ACCEL_CONFIG2,ACCEL_DLPF_CFG_10);
+		
 		case ACCEL_DLP_CFG_21:
+		
 			imu.bbb_i2c_writeByte(ACCEL_CONFIG2,ACCEL_DLPF_CFG_21);
+		
 		case ACCEL_DLP_CFG_44:
+		
 			imu.bbb_i2c_writeByte(ACCEL_CONFIG2,ACCEL_DLPF_CFG_44);
+		
 		case ACCEL_DLP_CFG_99:
+		
 			imu.bbb_i2c_writeByte(ACCEL_CONFIG2,ACCEL_DLP_CFG_99);
+		
 		case ACCEL_DLP_CFG_218:
+
 			imu.bbb_i2c_writeByte(ACCEL_CONFIG2,ACCEL_DLP_CFG_218);
 	}
 }
@@ -152,7 +188,9 @@ void IMU_MPU9250::initAK8963(){
 	
 	//Enable i2c bypass to allow access to magnetometer:
 	imu.bbb_i2c_writeByte(USER_CTRL,I2C_MST_EN);
+	
 	imu.bbb_i2c_writeByte(I2C_MST_CTRL,I2C_MST_CLK);
+	
 	imu.bbb_i2c_writeByte(INT_PIN_CFG,BYPASS_EN)
 	
 	// Init the AK8963
