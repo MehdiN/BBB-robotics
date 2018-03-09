@@ -11,8 +11,9 @@
 IMU_MPU9250::IMU_MPU9250(int bus,BBB_I2C_Device mpu9250,BBB_I2C_Device ak8963){
 
 imu(mpu9250),
-magnetometer(ak8963),
+mag(ak8963),
 dlpf(false)
+mag_enable(false)
 
 }
 
@@ -188,14 +189,12 @@ void IMU_MPU9250::initAK8963(){
 	
 	//Enable i2c bypass to allow access to magnetometer:
 	imu.bbb_i2c_writeByte(USER_CTRL,I2C_MST_EN);
-	
 	imu.bbb_i2c_writeByte(I2C_MST_CTRL,I2C_MST_CLK);
-	
 	imu.bbb_i2c_writeByte(INT_PIN_CFG,BYPASS_EN)
 	
 	// Init the AK8963
 	uint8_t ret;
-	if(imu.bbb_i2c_read_one_byte(AK8963_ADDRESS,&ret)<0){
+	if(mag.bbb_i2c_read_one_byte(AK8963_ADDRESS,&ret)<0){
 		throw string("ERROR TO READ AK8963");
 	};
 	if(ret != WHO_AM_I_AK8963){
@@ -204,14 +203,13 @@ void IMU_MPU9250::initAK8963(){
 }
 
 
-void IMU_MPU9250::
+
+
 
 void IMU_MPU9250::writeAK89(uint8_t subAddress,uint8_t data){
+	if mag_enable{
 	bbb_i2c_writeByte(I2C_SLV0_ADDR,AK8963_ADDRESS);
-	bbb_i2c_writeByte(I2C_SLV0_REG,subAdress);
-	bbb_i2c_writeByte(I2C_SLV0_DO,data);
-	bbb_i2c_writeByte(I2C_SLV0_CTRL,0X01<<7);
-	bbb_i2c_writeByte(I2C_SLV4_CTRL,0x01);
+	}
 
 }
 

@@ -64,6 +64,7 @@
 #define I2C_SLV4_CTRL		0x34
 #define	I2C_SLV4_DI			0x35
 #define I2C_MST_STATUS		0x36
+
 #define INT_PIN_CFG			0x37
 #define INT_ENABLE			0x38
 #define	INT_STATUS			0x3A
@@ -222,5 +223,6 @@ public:
 
 private:
 	BBB_I2C_Device imu;
+	BBB_I2C_Device mag;
 
 }
