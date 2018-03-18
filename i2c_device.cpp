@@ -21,8 +21,7 @@ int BBB_I2C_Device::bbb_i2c_init(int bus,uint8_t devAddr){
 	_bus = bus;
 
 	if(_bus !=1 && _bus !=2){
-		std::cout << "BUS SELECTED IS NOT VALID"<< std::endl;
-		return -1;
+		throw std::string("BUS SELECTED IS NOT VALID");
 	}
 	_old_in_use = _in_use;
 	_in_use = 1;
@@ -45,7 +44,7 @@ int BBB_I2C_Device::bbb_i2c_init(int bus,uint8_t devAddr){
 	#ifdef DEBUG
 		std::cout << "calling ioctl slave adress change" << std::endl;
 	#endif
-	
+
 	if(ioctl(_file, I2C_SLAVE,_devAddr) < 0){
 		std::cout << "ioctl slave change failed" << std::endl;
 		return -1;
@@ -67,8 +66,7 @@ int BBB_I2C_Device::bbb_i2c_init(int bus,uint8_t devAddr){
 int BBB_I2C_Device::bbb_i2c_set_device_address(uint8_t devAddr){
 
 	if(_bus !=1 && _bus !=2){
-		std::cout << "BUS SELECTED IS NOT VALID"<< std::endl;
-		return -1;
+		throw std::string("BUS SELECTED IS NOT VALID");
 	}
 
 	// quit and return 0 if the address is correct
@@ -80,14 +78,14 @@ int BBB_I2C_Device::bbb_i2c_set_device_address(uint8_t devAddr){
 	#ifdef DEBUG
 		std::cout << "calling ioctl slave adress change" << std::endl;
 	#endif
-	
+
 	if(ioctl(_file, I2C_SLAVE,devAddr) < 0){
 		std::cout << "ioctl slave change failed" << std::endl;
 		return -1;
 	}
 
 	_devAddr = devAddr;
-	
+
 	return 0;
 }
 
@@ -95,8 +93,7 @@ int BBB_I2C_Device::bbb_i2c_set_device_address(uint8_t devAddr){
 int BBB_I2C_Device::bbb_i2c_close(void){
 
 	if(_bus!=1 && _bus!=2){
-		std::cout << "BUS SELECTED IS NOT VALID"<< std::endl;
-		return -1;
+		throw std::string("BUS SELECTED IS NOT VALID");
 	}
 	_devAddr = 0;
 	if(close(_file)<0) return -1;
@@ -108,8 +105,7 @@ int BBB_I2C_Device::bbb_i2c_close(void){
 // 	claim a i2c bus
 int BBB_I2C_Device::bbb_i2c_claim_bus(void){
 	if(_bus!=1 && _bus!=2){
-		std::cout << "BUS SELECTED IS NOT VALID"<< std::endl;
-		return -1;
+		throw std::string("BUS SELECTED IS NOT VALID");
 	}
 	_in_use=1;
 	return 0;
@@ -117,13 +113,12 @@ int BBB_I2C_Device::bbb_i2c_claim_bus(void){
 
 
 
-// release i2c bus 
+// release i2c bus
 int BBB_I2C_Device::bbb_i2c_release_bus(void){
 	if(_bus!=1 && _bus!=2){
-		std::cout << "BUS SELECTED IS NOT VALID"<< std::endl;
-		return -1;
+		throw std::string("BUS SELECTED IS NOT VALID");
 	}
-	_in_use=0;
+	_in_use = 0;
 	return 0;
 }
 
@@ -131,8 +126,7 @@ int BBB_I2C_Device::bbb_i2c_release_bus(void){
 //get i2c bus state
 int BBB_I2C_Device::bbb_i2c_get_in_use_state(void){
 	if(_bus!=1 && _bus!=2){
-		std::cout << "BUS SELECTED IS NOT VALID" << std::endl;
-		return -1;
+		throw std::string("BUS SELECTED IS NOT VALID");
 	}
 	return _in_use;
 }
@@ -142,10 +136,9 @@ int BBB_I2C_Device::bbb_i2c_get_in_use_state(void){
 int BBB_I2C_Device::bbb_i2c_readBytes(uint8_t regAddr,uint8_t length, uint8_t *data){
 
 	int ret;
-	
+
 	if(_bus!=1 && _bus!=2){
-	std::cout << "BUS SELECTED IS NOT VALID"<< std::endl;
-	return -1;
+		throw std::string("BUS SELECTED IS NOT VALID");
 	}
 
 	if(length > MAX_LENGTH_I2C){
@@ -161,8 +154,7 @@ int BBB_I2C_Device::bbb_i2c_readBytes(uint8_t regAddr,uint8_t length, uint8_t *d
 
 	ret = write(_file,&regAddr,1);
 	if(ret != 1){
-		std::cout << "FAILED TO WRITE TO I2C BUS" << std::endl;
-		return -1;
+		throw std::string("FAILED TO WRITE TO I2C BUS");
 	}
 
 	ret = read(_file,data,length);
@@ -178,7 +170,7 @@ int BBB_I2C_Device::bbb_i2c_readByte(uint8_t regAddr, uint8_t *data){
 }
 
 int BBB_I2C_Device::bbb_i2c_readWords(uint8_t regAddr, uint8_t length,uint16_t *data) {
-	
+
 	int ret,i;
 	char buffer[MAX_LENGTH_I2C];
 
@@ -187,23 +179,22 @@ int BBB_I2C_Device::bbb_i2c_readWords(uint8_t regAddr, uint8_t length,uint16_t *
 		return -1;
 	}
 	if(length>(MAX_LENGTH_I2C/2)){
-		std::cout << "Length must be less than MAX_LENGTH_I2C/2" << std::endl; 
+		std::cout << "Length must be less than MAX_LENGTH_I2C/2" << std::endl;
 		return -1;
 	}
 	// claim the bus during this operation
 	_old_in_use = _in_use;
 	_in_use = 1;
-	
+
 	#ifdef DEBUG
 	std::cout << "i2c devAddr:0x" << std::hex << _devAddr << std::endl;
 	std::cout << "reading " << length << "words from 0x" << std::hex << regAddr << std:endl;
 	#endif
 
-	// write first 
+	// write first
 	ret = write(_file, &regAddr, 1);
 	if(ret!=1){
-		std::cout <<"FAILED TO WRITE TO I2C BUS"<< std::endl;
-		return -1;
+		throw std::string()"FAILED TO WRITE TO I2C BUS");
 	}
 
 	// then read the response
@@ -211,17 +202,17 @@ int BBB_I2C_Device::bbb_i2c_readWords(uint8_t regAddr, uint8_t length,uint16_t *
 	if(ret!=(length*2)){
 		std::cout << "i2c device returned " << ret << " bytes" << std::endl;
 		std::cout << "Expected " << length << " bytes" << std::endl;
-		return -1;
+		throw std::string("ERROR")
 	}
-	
+
 	// form words from bytes and put into user's data array
 	for(i=0;i<length;i++){
-		data[i] = (((uint16_t)buffer[0])<<8 | buffer[1]); 
+		data[i] = (((uint16_t)buffer[0])<<8 | buffer[1]);
 	}
-	
+
 	// return the in_use state to previous state.
 	_in_use = _old_in_use;
-	
+
 	return 0;
 }
 
@@ -245,25 +236,24 @@ int BBB_I2C_Device::bbb_i2c_readBit( uint8_t regAddr, uint8_t bitNum,uint8_t *da
 // I2C writes bytes
 
 int BBB_I2C_Device::bbb_i2c_writeBytes(uint8_t regAddr, uint8_t length,uint8_t* data){
-	
+
 	int i,ret;
-	uint8_t writeData[length+1]; 
+	uint8_t writeData[length+1];
 
 	if(_bus!=1 && _bus!=2){
-		std::cout << "BUS SELECTED IS NOT VALID"<< std::endl;
-		return -1;
+		throw std::string("BUS SELECTED IS NOT VALID");
 	}
-	
+
 	// claim the bus during this operation
 	_old_in_use = _in_use;
 	_in_use = 1;
-	
+
 	// assemble array to send, starting with the register address
-	writeData[0] = regAddr; 
+	writeData[0] = regAddr;
 	for(i=0; i<length; i++){
-		writeData[i+1] = data[i]; 
+		writeData[i+1] = data[i];
 	}
-	
+
 #ifdef DEBUG
 	std::cout << "i2c devAddr:0x%x  " << std::hex <<< _devAddr << std::endl;
 	std::cout << "writing " << length << " bytes to 0x" << regAddr <<std::endl;
@@ -272,14 +262,14 @@ int BBB_I2C_Device::bbb_i2c_writeBytes(uint8_t regAddr, uint8_t length,uint8_t* 
 		std::cout << "data[i]";
 	}
 	std::cout << "\n";
-#endif 
-	
+#endif
+
 	// send the bytes
 	ret = write(_file, writeData, length+1);
 	// write should have returned the correct # bytes written
 	if( ret!=(length+1)){
-		std::cout << "I2C WRITE FAILED" << std::endl;
-		return -1;
+		throw std::string("I2C WRITE FAILED");
+
 	}
 	// return the in_use state to previous state.
 	_in_use = _old_in_use;
@@ -295,14 +285,14 @@ int BBB_I2C_Device::bbb_i2c_writeByte( uint8_t regAddr, uint8_t data) {
 // I2C write words
 
 int BBB_I2C_Device::bbb_i2c_writeWords(uint8_t regAddr, uint8_t length,uint16_t* data){
-	
+
 	int i,ret;
 	uint8_t writeData[(length*2)+1];
-   
+
    // claim the bus during this operation
 	_old_in_use = _in_use;
 	_in_use = 1;
-	
+
    // assemble bytes to send
    writeData[0] = regAddr;
 	for (i=0; i<length; i++){
@@ -318,18 +308,17 @@ int BBB_I2C_Device::bbb_i2c_writeWords(uint8_t regAddr, uint8_t length,uint16_t*
 		std::cout << writedata[i];
 	}
 	std::cout << "\n";
-#endif 
-	
+#endif
+
 
 	ret = write(_file, writeData, (length*2)+1);
 	if(ret!=(length*2)+1){
-		std::cout << "I2C WRITE FAILED"<< std::endl;
-		return -1;
+		throw std::string("I2C WRITE FAILED");
 	}
 
 	// return the in_use state to previous state.
 	_in_use = _old_in_use;
-	
+
    return 0;
 }
 
@@ -354,16 +343,15 @@ int BBB_I2C_Device::bbb_i2c_writeBit(uint8_t regAddr, uint8_t bitNum,uint8_t dat
 
 int BBB_I2C_Device::bbb_i2c_sendBytes(uint8_t length, uint8_t* data){
 	int ret=0;
-	
+
 	if(_bus!=1 && _bus!=2){
-		std::cout << "BUS SELECTED IS NOT VALID"<< std::endl;
-		return -1;
+		throw std::string("BUS SELECTED IS NOT VALID");
 	}
-	
+
 	// claim the bus during this operation
 	_old_in_use= _in_use;
 	_in_use = 1;
-	
+
 #ifdef DEBUG
 	std::cout << "i2c devAddr:0x%x  " << _devAddr << std::endl;
 	std::cout <<"sending " << length << " bytes" << std:endl;
@@ -383,11 +371,11 @@ int BBB_I2C_Device::bbb_i2c_sendBytes(uint8_t length, uint8_t* data){
 		std::cout << data[i];
 	}
 	std::cout << "\n";
-#endif	
-	
+#endif
+
 	// return the in_use state to previous state.
 	_in_use = _old_in_use;
-	
+
 	return 0;
 }
 

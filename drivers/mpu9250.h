@@ -14,7 +14,7 @@
 #define MPU9250_ADDRESS		0x68
 #define AK8963_ADDRESS		0x0C
 
-// GYROSCOPE AND ACCELEROMETER REGISTER MAP 
+// GYROSCOPE AND ACCELEROMETER REGISTER MAP
 
 //Self tests and offsets REGISTERS
 
@@ -28,7 +28,7 @@
 
 // GYRO OFFSET
 
-#define XG_OFFSET_H			0x13		
+#define XG_OFFSET_H			0x13
 #define XG_OFFSET_L			0x14
 #define YG_OFFSET_H			0x15
 #define YG_OFFSET_L			0x16
@@ -72,7 +72,7 @@
 // ACCEL | GYRO | TEMP OUTPUTS
 
 #define ACCEL_XOUT_H 		0x3B
-#define ACCEL_XOUT_L 		0x3C 
+#define ACCEL_XOUT_L 		0x3C
 #define ACCEL_YOUT_H 		0x3D
 #define ACCEL_YOUT_L 		0x3E
 #define ACCEL_ZOUT_H 		0x3F
@@ -128,17 +128,18 @@
 #define SIGNAL_PATH_RESET  	0x68
 #define MOT_DETECT_CTRL  	0x69
 
-// 
+//
 
-#define USER_CTRL        	0x6A 
+#define USER_CTRL        	0x6A
 #define PWR_MGMT_1       	0x6B // return 0x01
 #define PWR_MGMT_2       	0x6C
+#define PWR_RESET         0x80
 
-#define DMP_BANK         	0x6D  
-#define DMP_RW_PNT       	0x6E  
-#define DMP_REG          	0x6F 
+#define DMP_BANK         	0x6D
+#define DMP_RW_PNT       	0x6E
+#define DMP_REG          	0x6F
 #define DMP_REG_1        	0x70
-#define DMP_REG_2        	0x71 
+#define DMP_REG_2        	0x71
 
 #define FIFO_COUNTH      	0x72
 #define FIFO_COUNTL      	0x73
@@ -166,8 +167,8 @@
 #define MAG_YOUT_L 			0x06
 #define MAG_ZOUT_H 			0x07
 #define MAG_ZOUT_L 			0x08
-	
-#define MAG_ST2   	    	0x09  
+
+#define MAG_ST2   	    	0x09
 #define MAG_CNTL  	    	0x0A // main mode control register
 #define MAG_ASTC  	    	0x0C // Self test control
 #define MAG_I2CDIS	    	0x0F // I2C disable
@@ -201,12 +202,12 @@
 #define ACCEL_FS_4G			0x01 << 3
 #define ACCEL_FS_8G			0x02 << 3
 #define ACCEL_FS_16G		0x03 << 3
- 
+
 // ACCEL DLPF Parameters
 
 #define ACCEL_DLPF_CFG_5	0X06
 #define ACCEL_DLPF_CFG_10	0X05
-#define ACCEL_DLPF_CFG_21 	0X04
+#define ACCEL_DLPF_CFG_21 0X04
 #define ACCEL_DLPF_CFG_44	0X03
 #define ACCEL_DLPF_CFG_99	0X02
 #define ACCEL_DLPF_CFG_218	0X01
