@@ -25,19 +25,19 @@ int BBB_I2C_Device::bbb_i2c_init(int bus,uint8_t devAddr){
 	_old_in_use = _in_use;
 	_in_use = 1;
 
-	char *filename;
+	const char *filename = "/dev/i2c-2";
 
-	switch(_bus){
-		case 1:
-			filename = I2C1_FILE;
-			break;
-		case 2:
-			filename = I2C2_FILE;
-			break;
-		default:
-			std::cout << "I2C BUS MUST BE 1 OR 2" << std::endl;
-			return -1;
-	}
+	// switch(_bus){
+	// 	case 1:
+	// 		filename = I2C1_FILE;
+	// 		break;
+	// 	case 2:
+	// 		filename = I2C2_FILE;
+	// 		break;
+	// 	default:
+	// 		std::cout << "I2C BUS MUST BE 1 OR 2" << std::endl;
+	// 		return -1;
+	// }
 
 	_file = open(filename,O_RDWR);
 
