@@ -17,7 +17,7 @@ class BBB_I2C_Device
 
 public:
 
-	BBB_I2C_Device(uint8_t devAddr,int bus,int file,int inialized,int in_use);
+	BBB_I2C_Device(uint8_t devAddr,int bus);
 
 
 	int bbb_i2c_init(int bus,uint8_t devAddr);

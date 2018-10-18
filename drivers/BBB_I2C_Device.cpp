@@ -5,12 +5,11 @@
 
 // Contructor of I2C bus intance
 
-BBB_I2C_Device::BBB_I2C_Device(uint8_t devAddr,int bus,int file,int inialized,int in_use):
+BBB_I2C_Device::BBB_I2C_Device(uint8_t devAddr,int bus):
 _devAddr(devAddr),
 _bus(bus),
-_file(file),
-_inialized(inialized),
-_in_use(in_use),
+_inialized(0),
+_in_use(0),
 _old_in_use(0)
 {}
 
@@ -26,20 +25,21 @@ int BBB_I2C_Device::bbb_i2c_init(int bus,uint8_t devAddr){
 	_old_in_use = _in_use;
 	_in_use = 1;
 
-	_file = 0;
-	_inialized = 1;
+	char *filename;
 
 	switch(_bus){
 		case 1:
-			_file = open(I2C1_FILE,O_RDWR);
+			filename = I2C1_FILE;
 			break;
 		case 2:
-			_file = open(I2C2_FILE,O_RDWR);
+			filename = I2C2_FILE;
 			break;
 		default:
 			std::cout << "I2C BUS MUST BE 1 OR 2" << std::endl;
-		return -1;
+			return -1;
 	}
+
+	_file = open(filename,O_RDWR);
 
 	#ifdef DEBUG
 		std::cout << "calling ioctl slave adress change" << std::endl;
@@ -50,13 +50,11 @@ int BBB_I2C_Device::bbb_i2c_init(int bus,uint8_t devAddr){
 		return -1;
 	}
 
-
 	_devAddr = devAddr;
 	_in_use = _old_in_use;
-
-	#ifdef DEBUG
-		std::cout << "succefully initialized i2c_" << bus << std::endl;
-	#endif
+	
+	std::cout << "succefully initialized i2c bus" << bus << std::endl;
+	_inialized = 1;
 
 	return 0;
 }
