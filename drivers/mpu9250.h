@@ -133,7 +133,7 @@
 #define USER_CTRL        	0x6A
 #define PWR_MGMT_1       	0x6B // return 0x01
 #define PWR_MGMT_2       	0x6C
-#define PWR_RESET         0x80
+#define PWR_RESET           0x80
 
 #define DMP_BANK         	0x6D
 #define DMP_RW_PNT       	0x6E
