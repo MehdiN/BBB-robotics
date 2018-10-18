@@ -12,7 +12,7 @@ int main(){
     uint8_t devAddr = 0x68;
     int bus = 2;
     int inialized = 0;
-    file = 0;
+    int file = 0;
     int in_use = 0;
 
     BBB_I2C_Device mpu9k(devAddr,bus,file,inialized,in_use);
@@ -21,7 +21,7 @@ int main(){
 
     mpu9k.bbb_i2c_readByte(0x75,&ret);
 
-    std::cout << std::hex <<ret << std:endl;
+    std::cout << std::hex << ret << std::endl;
 
     return 0;
 
