@@ -20,7 +20,8 @@ int BBB_I2C_Device::bbb_i2c_init(int bus,uint8_t devAddr){
 	_bus = bus;
 
 	if(_bus !=1 && _bus !=2){
-		throw std::string("BUS SELECTED IS NOT VALID");
+		std::cout << "BUS SELECTED IS NOT VALID";
+		return -1;
 	}
 	_old_in_use = _in_use;
 	_in_use = 1;
