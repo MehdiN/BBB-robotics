@@ -1,13 +1,6 @@
-#include <iostream>
-#include <string>
-#include <math.h>
-#include "../i2c_device.h"
-
-
-
+#include "main.h"
 
 int main(){
-
     // Create a I2C device to MPU adress
     uint8_t devAddr = 0x68;
     int bus = 2;
