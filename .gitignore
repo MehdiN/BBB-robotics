@@ -31,4 +31,6 @@
 *.out
 *.app
 
-./drivers/main
+./build/*
+.vscode/*
+.tags
