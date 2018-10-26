@@ -152,9 +152,9 @@ int16_t IMU_MPU9250::readTemp(){
 void IMU_MPU9250::initAK8963(){
 
 	//Enable i2c bypass to allow access to magnetometer: 
-	imu.bbb_i2c_writeByte(USER_CTRL,I2C_MST_EN);
-	imu.bbb_i2c_writeByte(I2C_MST_CTRL,I2C_MST_CLK);
-	imu.bbb_i2c_writeByte(INT_PIN_CFG,BYPASS_EN);
+	// imu.bbb_i2c_writeByte(USER_CTRL,I2C_MST_EN);
+	// imu.bbb_i2c_writeByte(I2C_MST_CTRL,I2C_MST_CLK);
+	// imu.bbb_i2c_writeByte(INT_PIN_CFG,BYPASS_EN);
 
 	if(!mpu_init){
 		std::cout << "I2C BYPASS DISABLED" <<std::endl;
@@ -166,8 +166,10 @@ void IMU_MPU9250::initAK8963(){
 		std::cout << "CANNOT READ AK8963 ADRESS" << std::endl;
 		return;
 		}
+
 	if(ret != WHO_AM_I_AK8963){
-		std::cout << ("ERROR") << std::endl;
+		printf("NOT THE AK8963");
+		printf("THIS IS THE 0c%x",ret);
 		return;
 	}
 

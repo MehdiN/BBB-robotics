@@ -17,6 +17,7 @@ int main(){
     // printf("Data read: %x \n",ret);
 
     inertial_unit.initMPU9250();
+    inertial_unit.initAK8963();
 
     int16_t gyro_data[3];
     int16_t accel_data[3];
@@ -27,7 +28,7 @@ int main(){
     aScale = inertial_unit.getAccelScale();
     gScale = inertial_unit.getGyroScale();
 
-    // std::cout << "READ DATA" << std::endl;
+
     for(int i=0;i<10;i++){
     //     std::cout<< "BEGIN Read" << std::endl;
         inertial_unit.readGyro(gyro_data);
