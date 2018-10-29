@@ -39,14 +39,18 @@ void setGyroFsr(uint8_t fsr);
 void setGyroDlpf(uint8_t bandwith);
 void configGyro(void);
 uint16_t getGyroScale(void);
-void readGyro(int16_t *destination);
-int16_t readTemp();
+void readRawGyro(int16_t *destination);
+int16_t readRawTemp();
 
 void setAccelFsr(uint8_t fsr);
 void setAccelDlpf(uint8_t bandwith);
 void configAccel(void);
 uint16_t getAccelScale(void);
-void readAccel(int16_t *destinaton);
+void readRawAccel(int16_t *destinaton);
+
+void readRawMag(int16_t *destination);
+void setMagFsr(uint16_t fsr){_mag_fsr = fsr;};
+float getMagRes();
 
 private:
 
@@ -59,6 +63,7 @@ private:
   uint8_t _accel_fsr;
   uint8_t _accel_bandwith;
   uint8_t _accel_resolution;
+  uint8_t _mag_fsr;
 
   int _bus;
   bool mag_enable;

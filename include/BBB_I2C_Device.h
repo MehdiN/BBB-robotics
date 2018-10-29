@@ -30,6 +30,7 @@ public:
 	int bbb_i2c_claim_bus(void);
 	int bbb_i2c_release_bus(void);
 	int bbb_i2c_get_in_use_state(void);
+	int bbb_i2c_is_init(void){return _inialized;};
 	int bbb_i2c_readBytes(uint8_t regAddr,uint8_t length, uint8_t *data);
 	int bbb_i2c_readByte(uint8_t regAddr, uint8_t *data);
 	int bbb_i2c_readWords(uint8_t regAddr, uint8_t length,uint16_t *data);

@@ -60,8 +60,10 @@ void IMU_MPU9250::initMPU9250(){
 	configAccel();
 
 	imu.bbb_i2c_writeByte(INT_PIN_CFG,BYPASS_EN);
+	usleep(200);
 	// set the initialized at true
 	mpu_init= true;
+	printf("GYRO AND ACCEL READY !\n");
   }
 
 
@@ -126,7 +128,7 @@ void IMU_MPU9250::setAccelDlpf(uint8_t bandwith){
 	_accel_bandwith = bandwith;
 }
 
-void IMU_MPU9250::readGyro(int16_t *destination){
+void IMU_MPU9250::readRawGyro(int16_t *destination){
 	uint8_t rawData[6];
 	imu.bbb_i2c_readBytes(GYRO_XOUT_H,6,&rawData[0]);
 	destination[0]= (int16_t)((int16_t)(rawData[0]<< 8) | rawData[1]);
@@ -134,7 +136,7 @@ void IMU_MPU9250::readGyro(int16_t *destination){
 	destination[2]= (int16_t)((int16_t)(rawData[4]<< 8) | rawData[5]);
 }
 
-void IMU_MPU9250::readAccel(int16_t *destination){
+void IMU_MPU9250::readRawAccel(int16_t *destination){
 	uint8_t rawData[6];
 	imu.bbb_i2c_readBytes(ACCEL_XOUT_H,6,&rawData[0]);
 	destination[0]= (int16_t)((int16_t)(rawData[0]<< 8) | rawData[1]);
@@ -142,7 +144,7 @@ void IMU_MPU9250::readAccel(int16_t *destination){
 	destination[2]= (int16_t)((int16_t)(rawData[4]<< 8) | rawData[5]);
 }
 
-int16_t IMU_MPU9250::readTemp(){
+int16_t IMU_MPU9250::readRawTemp(){
   uint8_t rawData[2];  // x/y/z gyro register data stored here
   imu.bbb_i2c_readBytes(TEMP_OUT_H, 2, &rawData[0]);
   return (int16_t)(((int16_t)rawData[0]) << 8 | rawData[1]);
@@ -160,25 +162,62 @@ void IMU_MPU9250::initAK8963(){
 		std::cout << "I2C BYPASS DISABLED" <<std::endl;
 	}
 
+	mag.bbb_i2c_init();
+
 	// Init the AK8963
 	uint8_t ret;
-	if(mag.bbb_i2c_readByte(AK8963_ADDRESS,&ret)<0){
+	if(mag.bbb_i2c_readByte(WHO_AM_I_AK8963,&ret)<0){
 		std::cout << "CANNOT READ AK8963 ADRESS" << std::endl;
 		return;
 		}
 
-	if(ret != WHO_AM_I_AK8963){
-		printf("NOT THE AK8963");
+	if(ret != 0x48){
+		printf("THIS IS NOT THE AK8963 ");
 		printf("THIS IS THE 0c%x",ret);
 		return;
 	}
+
+	printf("THIS IS THE AK8963 ! \n");
 
 	mag.bbb_i2c_writeByte(MAG_CNTL,0x00); //power down the ak8963
 	usleep(100);
 	mag.bbb_i2c_writeByte(MAG_CNTL,0x0F); // enter in Fuse ROM mode
 	usleep(100);
 	mag.bbb_i2c_writeByte(MAG_CNTL,MAG_FS_16 << 4 | MAG_ODR_100);
+	setMagFsr(MAG_FS_16);
 	usleep(100);
 	mag_init = true;
 	mag_enable = true;
+	usleep(100);
+	printf("MAG READY \n");
+}
+
+float IMU_MPU9250::getMagRes(){
+	switch(_mag_fsr){
+		case MAG_FS_14:
+			return 58.5; // (4800/2**(14-1))*100 in 100*µT/LSB ~ gauss/LSB
+		case MAG_FS_16:
+			return 14.6; // (4800/2**(14-1))*100 in 100*µT/LSB
+		default:
+		printf("NO VALID SCALE");
+			return 0;
+	}
+}
+
+
+void IMU_MPU9250::readRawMag(int16_t * destination){
+	uint8_t rawData[7];
+	uint8_t is_mag_ready;
+	mag.bbb_i2c_readByte(MAG_ST1,&is_mag_ready);
+	// check if new data is ready
+	bool newMagData = (is_mag_ready & 0x01);
+	if(newMagData == true){
+		mag.bbb_i2c_readBytes(MAG_XOUT_H,7,&rawData[0]);
+		uint8_t c = rawData[0];
+		if(!(c & 0x08)){ // check AK8963 ST2 for Magnetic Overflow
+			destination[0]= (int16_t)((int16_t)(rawData[0]<< 8) | rawData[1]);
+			destination[1]= (int16_t)((int16_t)(rawData[2]<< 8) | rawData[3]);
+			destination[2]= (int16_t)((int16_t)(rawData[4]<< 8) | rawData[5]);
+		}
+	}
 }
