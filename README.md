@@ -1,4 +1,4 @@
-# Beagle Bone Black/Blue libraries for Robotics 
+# BeagleBone Black/Blue libraries for Robotics 
 
 **Hardware**: 
  * BeagleBone Bone Blue or Black
