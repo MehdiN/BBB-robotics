@@ -221,3 +221,98 @@ void IMU_MPU9250::readRawMag(int16_t * destination){
 		}
 	}
 }
+
+// TODO: calibration 
+// void IMU_MPU9250::calibrateMPU9250(){}
+
+
+void IMU_MPU9250::selftestMPU9250(float *destination){
+	uint8_t rawData[6] = {0};
+	uint8_t self_test[6];
+	int32_t gyroAvg[3]= {0},accelAvg[3] = {0},gyroSTAvg[3]= {0},accelSTAvg[3]= {0};
+	float factoryTrim[6];
+	
+	// Are these step necessary ?
+	imu.bbb_i2c_init();
+	// Power On the IMU and restore the defaults.
+	imu.bbb_i2c_writeByte(PWR_MGMT_1,0x00);
+	
+	
+	usleep(100);// Wait for all registers to reset;
+	imu.bbb_i2c_writeByte(SMPLRT_DIV,SAMPLE_RATE_DIVIDER_0);
+	imu.bbb_i2c_writeByte(CONFIG,GYRO_DLPF_CFG_92);
+	imu.bbb_i2c_writeByte(GYRO_CONFIG,GYRO_FS_250DPS);
+	imu.bbb_i2c_writeByte(ACCEL_CONFIG2,ACCEL_DLPF_CFG_99);
+	imu.bbb_i2c_writeByte(ACCEL_CONFIG,ACCEL_FS_2G);
+
+	usleep(25);
+
+	for (uint16_t ii = 0;ii<200;ii++){
+		
+		imu.bbb_i2c_readBytes(ACCEL_XOUT_H,6,&rawData[0]);
+		accelAvg[0] += (int16_t)((int16_t)(rawData[0]<< 8) | rawData[1]);
+		accelAvg[1] += (int16_t)((int16_t)(rawData[2]<< 8) | rawData[3]);
+		accelAvg[2] += (int16_t)((int16_t)(rawData[4]<< 8) | rawData[5]);
+
+		imu.bbb_i2c_readBytes(GYRO_XOUT_H,6,&rawData[0]);
+		gyroAvg[0] += (int16_t)((int16_t)(rawData[0]<< 8) | rawData[1]);
+		gyroAvg[1] += (int16_t)((int16_t)(rawData[2]<< 8) | rawData[3]);
+		gyroAvg[2] += (int16_t)((int16_t)(rawData[4]<< 8) | rawData[5]);
+	}
+
+	for (uint16_t ii = 0;ii<3;ii++){
+		accelAvg[ii] /= 200;
+		gyroAvg[ii] /= 200;
+	}
+
+	// enable self-test
+   	imu.bbb_i2c_writeByte(ACCEL_CONFIG, 0xE0); // Enable self test on all three axes and set accelerometer range to +/- 2 g
+	imu.bbb_i2c_writeByte(GYRO_CONFIG, 0xE0); // Enable self test on all three axes and set gyro range to +/- 250 degrees/s
+
+	usleep(100);
+
+		for (uint16_t ii = 0;ii<200;ii++){
+		
+		imu.bbb_i2c_readBytes(ACCEL_XOUT_H,6,&rawData[0]);
+		accelSTAvg[0] += (int16_t)((int16_t)(rawData[0]<< 8) | rawData[1]);
+		accelSTAvg[1] += (int16_t)((int16_t)(rawData[2]<< 8) | rawData[3]);
+		accelSTAvg[2] += (int16_t)((int16_t)(rawData[4]<< 8) | rawData[5]);
+
+		imu.bbb_i2c_readBytes(GYRO_XOUT_H,6,&rawData[0]);
+		gyroSTAvg[0] += (int16_t)((int16_t)(rawData[0]<< 8) | rawData[1]);
+		gyroSTAvg[1] += (int16_t)((int16_t)(rawData[2]<< 8) | rawData[3]);
+		gyroSTAvg[2] += (int16_t)((int16_t)(rawData[4]<< 8) | rawData[5]);
+	}
+
+	for (uint16_t ii = 0;ii<3;ii++){
+		accelSTAvg[ii] /= 200;
+		gyroSTAvg[ii] /= 200;
+	}
+
+	// disable self-test
+   	imu.bbb_i2c_writeByte(ACCEL_CONFIG, 0x00);
+	imu.bbb_i2c_writeByte(GYRO_CONFIG, 0x00);
+
+	usleep(100);
+
+	imu.bbb_i2c_readByte(SELF_TEST_X_ACCEL,&self_test[0]);
+	imu.bbb_i2c_readByte(SELF_TEST_Y_ACCEL,&self_test[1]);
+	imu.bbb_i2c_readByte(SELF_TEST_Y_ACCEL,&self_test[2]);
+	imu.bbb_i2c_readByte(SELF_TEST_X_GYRO,&self_test[3]);
+	imu.bbb_i2c_readByte(SELF_TEST_Y_GYRO,&self_test[4]);
+	imu.bbb_i2c_readByte(SELF_TEST_Z_GYRO,&self_test[5]);
+
+	// Factory trim
+
+	factoryTrim[0] = (float)(2620/2)*pow(1.01,(float)self_test[0]-1);
+	factoryTrim[1] = (float)(2620/2)*pow(1.01,(float)self_test[1]-1);
+	factoryTrim[2] = (float)(2620/2)*pow(1.01,(float)self_test[2]-1);
+	factoryTrim[3] = (float)(2620/2)*pow(1.01,(float)self_test[3]-1);
+	factoryTrim[4] = (float)(2620/2)*pow(1.01,(float)self_test[4]-1);
+	factoryTrim[5] = (float)(2620/2)*pow(1.01,(float)self_test[5]-1);
+
+	for (int i = 0; i < 3; i++) {
+     destination[i]   = 100.0*((float)(accelSTAvg[i] - accelAvg[i]))/factoryTrim[i] - 100.;
+     destination[i+3] = 100.0*((float)(gyroSTAvg[i] - gyroAvg[i]))/factoryTrim[i+3] - 100.;
+	}
+}

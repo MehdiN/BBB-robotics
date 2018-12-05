@@ -185,14 +185,14 @@
 
 //	GYROSCOPE FULL SCALE RESOLUTION
 
-#define GYRO_FS_250DPS 		0x00
+#define GYRO_FS_250DPS 		0x00 << 3
 #define GYRO_FS_500DPS 		0x01 << 3
 #define GYRO_FS_1000DPS 	0x02 << 3
 #define GYRO_FS_2000DPS 	0x03 << 3
 
 //	ACCELEROMETER FULL SCALE RESOLUTION
 
-#define ACCEL_FS_2G			0x00
+#define ACCEL_FS_2G			0x00 << 3
 #define ACCEL_FS_4G			0x01 << 3
 #define ACCEL_FS_8G			0x02 << 3
 #define ACCEL_FS_16G		0x03 << 3

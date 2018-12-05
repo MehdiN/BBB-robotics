@@ -1,3 +1,5 @@
+// #ifndef __MPU9250_H__
+// #define __MPU9250_H__
 #include <iostream>
 #include <string>
 #include <math.h>
@@ -51,6 +53,9 @@ void readRawAccel(int16_t *destinaton);
 void readRawMag(int16_t *destination);
 void setMagFsr(uint16_t fsr){_mag_fsr = fsr;};
 float getMagRes();
+
+void selftestMPU9250(float *destination);
+void calibrateMPU9250();
 
 private:
 
