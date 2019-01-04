@@ -6,6 +6,12 @@
 #include "BBB_I2C_Device.h"
 #include "mpu9250_map.h"
 
+
+#define CST_G 		9.80665f
+#define PI 			M_PI
+#define DEG_TO_RAD 	0.0174532925199f
+#define RAD_TO_DEG	57.295779513f
+
 /* DRIVER FOR MPU-9250 */
 
 
@@ -55,7 +61,7 @@ void setMagFsr(uint16_t fsr){_mag_fsr = fsr;};
 float getMagRes();
 
 void selftestMPU9250(float *destination);
-void calibrateMPU9250();
+// void calibrateMPU9250();
 
 private:
 

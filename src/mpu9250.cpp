@@ -1,14 +1,6 @@
 #include "mpu9250.h"
 
 
-
-#define CST_G 		9.80665f
-#define PI 			M_PI
-#define DEG_TO_RAD 	0.0174532925199f
-#define RAD_TO_DEG	57.295779513f
-
-
-
 void IMU_MPU9250::initMPU9250(){
 
 	// init the I2c object
