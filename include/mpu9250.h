@@ -1,5 +1,8 @@
-// #ifndef __MPU9250_H__
-// #define __MPU9250_H__
+#ifndef __MPU9250_H__
+#define __MPU9250_H__
+
+
+
 #include <iostream>
 #include <string>
 #include <math.h>
@@ -82,3 +85,6 @@ private:
   bool mag_init;
 
 };
+
+
+#endif
