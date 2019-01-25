@@ -1,8 +1,14 @@
+#ifndef __BMP280_H__
+#define __BMP280_H__
+
+
+
+
 #include "BBB_I2C_Device.h"
 #include "bmp280_regmap.h"
 
 
-struct CalibrationBMP {
+struct Calibration_Params {
 
     public:
 
@@ -34,10 +40,17 @@ public:
     }
 
 void initBMP280();
-void readCalibBMP280()
+void get_calib_param(void);
+void read_raw_data(int32_t *destination);
+uint32_t get_comp_press(int32_t uncomp_press);
+uint32_t get_comp_temp(int32_t uncomp_temp);
 
 private:
     BBB_I2C_Device barometer;
+    Calibration_Params calib_params;
 
 
-}
+};
+
+
+#endif
