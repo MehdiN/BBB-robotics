@@ -195,6 +195,7 @@ int BBB_I2C_Device::bbb_i2c_readWords(uint8_t regAddr, uint8_t length,uint16_t *
 		std::cout << "Length must be less than MAX_LENGTH_I2C/2" << std::endl;
 		return -1;
 	}
+
 	// claim the bus during this operation
 	_old_in_use = _in_use;
 	_in_use = 1;
@@ -207,11 +208,12 @@ int BBB_I2C_Device::bbb_i2c_readWords(uint8_t regAddr, uint8_t length,uint16_t *
 	// write first
 	ret = write(_file, &regAddr, 1);
 	if(ret!=1){
-		std::cout <<("FAILED TO WRITE TO I2C BUS");
+		printf("FAILED TO WRITE TO I2C BUS");
 	}
 
 	// then read the response
 	ret = read(_file, buffer, length*2);
+	
 	if(ret!=(length*2)){
 		printf( "i2c device returned %d bytes",ret);
 		printf("Expected %d bytes",length);
@@ -255,7 +257,7 @@ int BBB_I2C_Device::bbb_i2c_writeBytes(uint8_t regAddr, uint8_t length,uint8_t* 
 	uint8_t writeData[length+1];
 
 	if(_bus!=1 && _bus!=2){
-		std::cout << "BUS SELECTED IS NOT VALID" << std::endl;
+		printf("BUS SELECTED IS NOT VALID");
 		return -1;
 	}
 
