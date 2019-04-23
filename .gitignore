@@ -34,6 +34,6 @@
 ./build/*
 .vscode/*
 .tags
-.diretory
+.directory
 docs/
 archives/
