@@ -13,9 +13,9 @@ public:
 
     void init(const MPU9250 &imu);
     float getResolution();
+    void readRawMag(int16_t *data);
 
 private:
-    void readRawMag(int16_t *data);
 
     bool _init;
     uint8_t mag_scale;

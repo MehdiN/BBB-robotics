@@ -10,12 +10,10 @@ BMP280::BMP280(uint8_t I2CBus,uint8_t I2CAddress):
 
 
 
-void BMP280::initBMP280(){
-    
-
-
+void BMP280::initBMP280()
+{
     uint8_t ret;
-    if(barometer.readRegis(BMP280_ID,&ret)<0){
+    if(this->readRegister(BMP280_ID,&ret)<0){
         printf("INIT ERROR: UNABLE TO READ REGISTER 0x%x \n",BMP280_ID);
         return;
     }
@@ -26,29 +24,26 @@ void BMP280::initBMP280(){
     }
 
     //reset and put the bmp in sleep mode
-    barometer.bbb_i2c_writeByte(RESET,0xB6); // soft_reset
-    barometer.bbb_i2c_writeByte(CNTL_MEAS,SLEEP_MODE);
+    this->writeRegister(RESET,0xB6); // soft_reset
+    this->writeRegister(CNTL_MEAS,SLEEP_MODE);
     usleep(200);
     //get the trimming parameters and set the seeting;
     this->get_calib_param();
     //
     usleep(200);
-    barometer.bbb_i2c_writeByte(CNTL_MEAS,OSRS_P_16);
-    barometer.bbb_i2c_writeByte(CNTL_MEAS,OSRS_T_2);
-    barometer.bbb_i2c_writeByte(CONFIG,FILTER_COEFF_16);
-    barometer.bbb_i2c_writeByte(CONFIG,ODR_0_5_MS);
+    this->writeRegister(CNTL_MEAS,OSRS_P_16);
+    this->writeRegister(CNTL_MEAS,OSRS_T_2);
+    this->writeRegister(CONFIG,FILTER_COEFF_16);
+    this->writeRegister(CONFIG,ODR_0_5_MS);
     // set the bmp to normal mode
-    barometer.bbb_i2c_writeByte(CNTL_MEAS,NORML_MODE);
-
-    // release bus
-    barometer.bbb_i2c_release_bus();
+    this->writeRegister(CNTL_MEAS,NORML_MODE);
 }
 
 
 void BMP280::get_calib_param(){
     uint8_t trim_data[24];
     int ret;
-    ret = barometer.bbb_i2c_readBytes(CALIB_T1_LSB,24,&trim_data[0]);
+    ret = this->readRegisters(CALIB_T1_LSB,24,&trim_data[0]);
     if (ret == 0){
         calib_params.dig_T1 = (uint16_t)((uint16_t)trim_data[0]<<8) | ((uint16_t)trim_data[1]);
         calib_params.dig_T2 = (int16_t)((int16_t)trim_data[2]<<8) | ((uint16_t)trim_data[3]);
@@ -68,11 +63,9 @@ void BMP280::get_calib_param(){
 
 void BMP280::read_raw_data(int32_t *destination){
     uint8_t data[6];
-    barometer.bbb_i2c_claim_bus();
-    barometer.bbb_i2c_readBytes(PRESS_MBS,6,&data[0]);
+    this->readRegisters(PRESS_MBS,6,&data[0]);
     destination[0] = (int32_t) ((((uint32_t) (data[0])) << 12) | (((uint32_t) (data[1])) << 4) | ((uint32_t) data[2] >> 4));
     destination[1] = (int32_t) ((((uint32_t) (data[3])) << 12) | (((uint32_t) (data[4])) << 4) | ((uint32_t) data[5] >> 4));
-    barometer.bbb_i2c_release_bus();
 } 
 
 
@@ -125,20 +118,20 @@ uint32_t BMP280::get_comp_press(int32_t uncomp_press){
 
 void BMP280::update_status(){
     uint8_t ret;
-    barometer.bbb_i2c_readByte(STATUS,&ret);
+   this->readRegister(STATUS,&ret);
     // the device is measuring if the bit_1
     // the device is updating if bit_3 = 1 
     
     if(ret & 0x08){
-        _is_updating = true;
+        _updating = true;
     } else {
-        _is_updating = false;
+        _updating = false;
     }
 
     if(ret & 0x01){
-        _is_measuring = true;
+        _measuring = true;
     } else {
-        _is_measuring = false;
+        _measuring = false;
     }
 
 }

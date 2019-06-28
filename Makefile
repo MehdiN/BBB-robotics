@@ -1,4 +1,4 @@
-CXX = g++
+CXX = arm-linux-gnueabihf-g++
 CXXFLAGS = -std=c++11 -Wall -g
 
 # path #

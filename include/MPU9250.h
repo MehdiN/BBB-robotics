@@ -33,7 +33,11 @@ public:
     
     uint16_t getGyroScale();
     uint16_t getAccelScale();
+    void readRawAccel(int16_t *data);
+    void readRawGyro(int16_t *data);
+    void readRawTemp(int16_t &data);
 
+    void startSelfTest(float *destination);
 
 private:
 
@@ -41,9 +45,7 @@ private:
     // I2CDevice magnetometer;
     
     // int16_t combineRegisters(uint8_t msb, uint8_t lsb);
-    void readRawAccel(int16_t *data);
-    void readRawGyro(int16_t *data);
-    void readRawTemp(int16_t &data);
+
     Parameters params;
 
     bool i2c_bypass;
